@@ -48,27 +48,25 @@ class Treap(MutableMapping):
             return 0
         return 1 + self.count_nodes(node.left) + self.count_nodes(node.right)
 
-    def preorder(self, root: TreapNode):
-        if root is None:
-            return
-        print(root.key, end=" ")
-        self.preorder(root.left)
-        self.preorder(root.right)
+    def preorder(self, node: TreapNode):
+        if node is not None:
+            yield node.key
+            yield from self.preorder(node.left)
+            yield from self.preorder(node.right)
 
-    def postorder(self, root: TreapNode):
-        if root is None:
-            return
-        self.preorder(root.left)
-        self.preorder(root.right)
-        print(root.key, end=" ")
+    def postorder(self, node: TreapNode):
+        if node is not None:
+            yield from self.postorder(node.left)
+            yield from self.postorder(node.right)
+            yield node.key
 
     def insert_node(self, key, value):
-        new_node = TreapNode.__init__(key, value)
+        new_node = TreapNode(key, value)
         if self.root is None:
             self.root = new_node
             return
         else:
-            left, right = self.split(self.root, key - 1)
+            left, right = self.split(self.root, key)
             self.root = self.merge(left, new_node)
             self.root = self.merge(self.root, right)
 
@@ -111,8 +109,7 @@ class Treap(MutableMapping):
         if root is None:
             return None
         elif root.key < key:
-            root.right = self.find(root.right, key)
+            return self.find(root.right, key)
         elif root.key > key:
-            root.left = self.find(root.left, key)
-        else:
-            return root
+            return self.find(root.left, key)
+        return root
