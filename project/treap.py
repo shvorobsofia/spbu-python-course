@@ -18,8 +18,51 @@ class Treap(MutableMapping):
     def __init__(self):
         self.root = None
 
-    def insert_node(self, key, value):
+    def __getitem__(self, key):
+        node = self.find(self.root, key)
+        if node is not None:
+            return node.value
+        raise KeyError(f"Key {key} not found in Treap")
 
+    def __setitem__(self, key, value):
+        self.insert_node(key, value)
+
+    def __delitem__(self, key):
+        self.root = self.remove(self.root, key)
+
+    def __iter__(self):
+        return self.inorder(self.root)
+
+    def __len__(self):
+        return self.count_nodes(self.root)
+
+
+    def inorder(self, node):
+        if node is not None:
+            yield from self.inorder(node.left)
+            yield node.key
+            yield from self.inorder(node.right)
+
+    def count_nodes(self, node):
+        if node is None:
+            return 0
+        return 1 + self.count_nodes(node.left) + self.count_nodes(node.right)
+
+    def preorder(self, root: TreapNode):
+        if root is None:
+            return
+        print(root.key, end=" ")
+        self.preorder(root.left)
+        self.preorder(root.right)
+
+    def postorder(self, root: TreapNode):
+        if root is None:
+            return
+        self.preorder(root.left)
+        self.preorder(root.right)
+        print(root.key, end=" ")
+
+    def insert_node(self, key, value):
         new_node = TreapNode.__init__(key, value)
         if self.root is None:
             self.root = new_node
@@ -29,9 +72,16 @@ class Treap(MutableMapping):
             self.root = self.merge(left, new_node)
             self.root = self.merge(self.root, right)
 
-
     def remove(self, root: TreapNode, key):
-        
+        if root is None:
+            return None
+        elif root.key < key:
+            root.right = self.remove(root.right, key)
+        elif root.key > key:
+            root.left = self.remove(root.left, key)
+        else:
+            root = self.merge(root.left, root.right)
+        return root
 
     def split(self, root: TreapNode, key):
         if root is None:
@@ -56,3 +106,13 @@ class Treap(MutableMapping):
         else:
             right.left = self.merge(right.left, left)
             return right
+
+    def find(self, root: TreapNode, key):
+        if root is None:
+            return None
+        elif root.key < key:
+            root.right = self.find(root.right, key)
+        elif root.key > key:
+            root.left = self.find(root.left, key)
+        else:
+            return root
