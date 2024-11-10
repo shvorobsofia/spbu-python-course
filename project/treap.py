@@ -36,7 +36,6 @@ class Treap(MutableMapping):
     def __len__(self):
         return self.count_nodes(self.root)
 
-
     def inorder(self, node):
         if node is not None:
             yield from self.inorder(node.left)
