@@ -38,7 +38,6 @@ def prime_decorator(gen: Callable[[], Generator[int, None, None]]) -> Callable[[
     return wrapper
 
 
-@get_rgba_element
 def get_rgba(index: int):
     return get_rgba_element(index)
 
@@ -46,3 +45,5 @@ def get_rgba(index: int):
 @prime_decorator
 def get_prime():
     return prime_generator()
+
+
