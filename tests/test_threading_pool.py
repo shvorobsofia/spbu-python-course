@@ -3,7 +3,7 @@ from project.thread_pool import ThreadPool
 
 
 def test_thread_pool_execution():
-    pool = ThreadPool(3) 
+    pool = ThreadPool(3)
 
     def sample_task():
         time.sleep(0.1)
