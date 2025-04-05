@@ -96,14 +96,21 @@ class Treap(MutableMapping):
     def merge(self, left: Optional[TreapNode], right: Optional[TreapNode]):
         if left is None:
             return right
-        if right is None:
-            return left
-        if left.value > right.value:
-            left.right = self.merge(left.right, right)
+        elif right is None:
             return left
         else:
-            right.left = self.merge(right.left, left)
-            return right
+            if (left.value is None) | (right.value is None):
+                return None
+
+            assert left.value is not None
+            assert right.value is not None
+
+            if left.value > right.value:
+                left.right = self.merge(left.right, right)
+                return left
+            else:
+                right.left = self.merge(right.left, left)
+                return right
 
     def find(self, root: Optional[TreapNode], key):
         if root is None:
