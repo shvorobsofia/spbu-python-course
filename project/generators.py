@@ -14,7 +14,7 @@ def get_rgba_element(index: int):
 
 def prime_generator() -> Generator[int, None, None]:
     """Генератор простых чисел."""
-    primes = []
+    primes: list[int] = []
     num = 2
     while True:
         if all(num % p != 0 for p in primes):
@@ -25,7 +25,7 @@ def prime_generator() -> Generator[int, None, None]:
 
 def prime_decorator(gen: Callable[[], Generator[int, None, None]]) -> Callable[[int], int]:
     """Декоратор, превращающий генератор в функцию, возвращающую k-е простое число."""
-    cache = []
+    cache: list[int] = []
     generator = gen()
 
     def wrapper(k: int) -> int:
@@ -45,5 +45,3 @@ def get_rgba(index: int):
 @prime_decorator
 def get_prime():
     return prime_generator()
-
-
