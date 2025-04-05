@@ -1,12 +1,12 @@
 import threading
 import queue
-from typing import Callable, Optional, Any, List
+from typing import Callable, Optional, Any, Tuple, List
 
 
 class ThreadPool:
     def __init__(self, num_threads: int):
         self.num_threads: int = num_threads
-        self.tasks: queue.Queue[tuple[Callable[[], Any], Optional[Callable[[Any], None]]]] = queue.Queue()
+        self.tasks: queue.Queue[Tuple[Callable[[], Any], Optional[Callable[[Any], None]]]] = queue.Queue()
         self.threads: List[threading.Thread] = []
         self.shutdown_flag: threading.Event = threading.Event()
 
