@@ -1,13 +1,7 @@
 name: Run Tests
 
 on:
-  push:
-    branches:
-      - task_6
-  pull_request:
-    branches:
-      - task_6
-      - main
+  [ push, pull_request ]
 
 jobs:
   test:
