@@ -21,7 +21,6 @@ class TreapNode:
     left = None
     right = None
 
-
     def __init__(self, key, value):
         """Initialize a new TreapNode with a key and value.
 
@@ -49,6 +48,7 @@ class Treap(MutableMapping):
         root (Optional[TreapNode]): The root node of the Treap, or None if the Treap
             is empty.
     """
+
     def __init__(self):
         """Initialize an empty Treap."""
         self.root = None
