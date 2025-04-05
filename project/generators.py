@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Generator, Callable
+from typing import Generator, Callable, List
 
 
 def get_rgba_element(index: int):
@@ -14,7 +14,7 @@ def get_rgba_element(index: int):
 
 def prime_generator() -> Generator[int, None, None]:
     """Генератор простых чисел."""
-    primes: list[int] = []
+    primes: List[int] = []
     num = 2
     while True:
         if all(num % p != 0 for p in primes):
@@ -25,7 +25,7 @@ def prime_generator() -> Generator[int, None, None]:
 
 def prime_decorator(gen: Callable[[], Generator[int, None, None]]) -> Callable[[int], int]:
     """Декоратор, превращающий генератор в функцию, возвращающую k-е простое число."""
-    cache: list[int] = []
+    cache: List[int] = []
     generator = gen()
 
     def wrapper(k: int) -> int:
