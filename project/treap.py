@@ -1,4 +1,5 @@
 from collections.abc import MutableMapping
+from typing import Optional
 
 
 class TreapNode:
@@ -47,13 +48,13 @@ class Treap(MutableMapping):
             return 0
         return 1 + self.count_nodes(node.left) + self.count_nodes(node.right)
 
-    def preorder(self, node: TreapNode):
+    def preorder(self, node: Optional[TreapNode]):
         if node is not None:
             yield node.key
             yield from self.preorder(node.left)
             yield from self.preorder(node.right)
 
-    def postorder(self, node: TreapNode):
+    def postorder(self, node: Optional[TreapNode]):
         if node is not None:
             yield from self.postorder(node.left)
             yield from self.postorder(node.right)
@@ -69,7 +70,7 @@ class Treap(MutableMapping):
             self.root = self.merge(left, new_node)
             self.root = self.merge(self.root, right)
 
-    def remove(self, root: TreapNode, key):
+    def remove(self, root: Optional[TreapNode], key):
         if root is None:
             return None
         elif root.key < key:
@@ -80,7 +81,7 @@ class Treap(MutableMapping):
             root = self.merge(root.left, root.right)
         return root
 
-    def split(self, root: TreapNode, key):
+    def split(self, root: Optional[TreapNode], key):
         if root is None:
             return None, None
         elif root.key < key:
@@ -92,7 +93,7 @@ class Treap(MutableMapping):
             root.left = right
             return left, root
 
-    def merge(self, left: TreapNode, right: TreapNode):
+    def merge(self, left: Optional[TreapNode], right: Optional[TreapNode]):
         if left is None:
             return right
         if right is None:
@@ -104,7 +105,7 @@ class Treap(MutableMapping):
             right.left = self.merge(right.left, left)
             return right
 
-    def find(self, root: TreapNode, key):
+    def find(self, root: Optional[TreapNode], key):
         if root is None:
             return None
         elif root.key < key:
