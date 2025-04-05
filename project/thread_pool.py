@@ -32,7 +32,7 @@ class ThreadPool:
                 continue
 
     def enqueue(
-            self, task: Callable[[], Any], callback: Optional[Callable[[Any], None]] = None
+        self, task: Callable[[], Any], callback: Optional[Callable[[Any], None]] = None
     ) -> None:
         if not self.shutdown_flag.is_set():
             self.tasks.put((task, callback))
