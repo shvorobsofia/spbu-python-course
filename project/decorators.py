@@ -44,18 +44,16 @@ def cache_results(size: int = 0):
             if key in cache:
                 return cache[key]
             result = func(*args, **kwargs)
-            if size > 0:
+            cache[key] = result  # Сохраняем результат всегда
+            if size > 0:  # Ограничиваем размер кэша только если size > 0
                 if len(order) >= size:
                     oldest_key = order.popleft()
                     cache.pop(oldest_key, None)
-                cache[key] = result
                 order.append(key)
             return result
 
         return wrapper
-
     return decorator
-
 
 class Evaluated:
     def __init__(self, func: Callable[[], Any]):
@@ -68,24 +66,43 @@ class Evaluated:
 class Isolated:
     pass
 
+
 def smart_args(func: Callable) -> Callable:
     defaults = func.__defaults__ or ()
     default_dict = {}
-
-    for i, param in enumerate(func.__code__.co_varnames[:func.__code__.co_argcount]):
-        if i < len(defaults):
-            default_dict[param] = defaults[i]
+    param_names = func.__code__.co_varnames[:func.__code__.co_argcount]
+    for i, param in enumerate(param_names[-len(defaults):]):
+        default_dict[param] = defaults[i]
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        new_kwargs = {}
-        for key, value in kwargs.items():
-            if isinstance(default_dict.get(key, None), Evaluated):
-                new_kwargs[key] = default_dict[key]()
-            elif isinstance(default_dict.get(key, None), Isolated):
-                new_kwargs[key] = copy.deepcopy(value)
-            else:
-                new_kwargs[key] = value
-        return func(*args, **new_kwargs)
+        new_kwargs = kwargs.copy()
+        sig = func.__code__.co_varnames[:func.__code__.co_argcount]
+        args_dict = dict(zip(sig, args))
+
+        for param in sig:
+            if param in args_dict:
+                # Позиционные аргументы
+                default_value = default_dict.get(param)
+                if isinstance(default_value, Isolated):
+                    new_kwargs[param] = copy.deepcopy(args_dict[param])
+                else:
+                    new_kwargs[param] = args_dict[param]
+            elif param in new_kwargs:
+                # Именованные аргументы
+                default_value = default_dict.get(param)
+                if isinstance(default_value, Isolated):
+                    new_kwargs[param] = copy.deepcopy(new_kwargs[param])
+            elif param in default_dict:
+                # Значения по умолчанию
+                default_value = default_dict[param]
+                if isinstance(default_value, Evaluated):
+                    new_kwargs[param] = default_value()  # Вызываем каждый раз
+                elif isinstance(default_value, Isolated):
+                    new_kwargs[param] = []  # Новый пустой список
+                else:
+                    new_kwargs[param] = default_value
+
+        return func(**new_kwargs)
 
     return wrapper
