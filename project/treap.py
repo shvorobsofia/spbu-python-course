@@ -15,10 +15,12 @@ class TreapNode:
         left (Optional[TreapNode]): The left child of the node, or None.
         right (Optional[TreapNode]): The right child of the node, or None.
     """
+
     key = None
     value = None
     left = None
     right = None
+
 
     def __init__(self, key, value):
         """Initialize a new TreapNode with a key and value.
