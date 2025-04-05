@@ -10,7 +10,7 @@ def test_inorder_traversal(filled_tree):
     # Проверка обхода inorder
     expected_inorder = [5, 7, 10, 12, 15, 18]
     assert (
-            list(filled_tree.inorder(filled_tree.root)) == expected_inorder
+        list(filled_tree.inorder(filled_tree.root)) == expected_inorder
     ), "Inorder traversal does not match expected output"
 
 
