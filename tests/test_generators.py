@@ -25,7 +25,7 @@ def test_prime(k, expected):
 
 def test_rgba_out_of_range():
     with pytest.raises(IndexError):
-        get_rgba(10**8)
+        get_rgba(10**9)
 
 
 def test_prime_invalid_index():
