@@ -4,7 +4,10 @@ from typing import Generator, Callable, List
 
 def get_rgba_element(index: int):
     """Генераторное выражение для четырехмерного набора векторов RGBA, где A - четное."""
-    rgba_space = ((r, g, b, a) for r, g, b, a in product(range(256), range(256), range(256), range(0, 101, 2)))
+    rgba_space = (
+        (r, g, b, a)
+        for r, g, b, a in product(range(256), range(256), range(256), range(0, 101, 2))
+    )
 
     for i, value in enumerate(rgba_space):
         if i == index:
@@ -23,7 +26,9 @@ def prime_generator() -> Generator[int, None, None]:
         num += 1
 
 
-def prime_decorator(gen: Callable[[], Generator[int, None, None]]) -> Callable[[int], int]:
+def prime_decorator(
+    gen: Callable[[], Generator[int, None, None]]
+) -> Callable[[int], int]:
     """Декоратор, превращающий генератор в функцию, возвращающую k-е простое число."""
     cache: List[int] = []
     generator = gen()
