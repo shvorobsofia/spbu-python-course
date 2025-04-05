@@ -6,7 +6,9 @@ from typing import Callable, Optional, Any, Tuple, List
 class ThreadPool:
     def __init__(self, num_threads: int):
         self.num_threads: int = num_threads
-        self.tasks: queue.Queue[Tuple[Callable[[], Any], Optional[Callable[[Any], None]]]] = queue.Queue()
+        self.tasks: queue.Queue[
+            Tuple[Callable[[], Any], Optional[Callable[[Any], None]]]
+        ] = queue.Queue()
         self.threads: List[threading.Thread] = []
         self.shutdown_flag: threading.Event = threading.Event()
 
@@ -19,7 +21,9 @@ class ThreadPool:
     def _worker(self) -> None:
         while not self.shutdown_flag.is_set():
             try:
-                task, callback = self.tasks.get(timeout=1)  # Таймаут для проверки shutdown_flag
+                task, callback = self.tasks.get(
+                    timeout=1
+                )  # Таймаут для проверки shutdown_flag
                 result = task()
                 if callback:
                     callback(result)
@@ -27,7 +31,9 @@ class ThreadPool:
             except queue.Empty:
                 continue
 
-    def enqueue(self, task: Callable[[], Any], callback: Optional[Callable[[Any], None]] = None) -> None:
+    def enqueue(
+            self, task: Callable[[], Any], callback: Optional[Callable[[Any], None]] = None
+    ) -> None:
         if not self.shutdown_flag.is_set():
             self.tasks.put((task, callback))
 
