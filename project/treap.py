@@ -98,7 +98,7 @@ class Treap(MutableMapping):
             return right
         if right is None:
             return left
-        elif left.value > right.value:
+        if left.value > right.value:
             left.right = self.merge(left.right, right)
             return left
         else:
