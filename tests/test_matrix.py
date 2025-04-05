@@ -30,7 +30,7 @@ def test_matrix_multiplication_dimension_mismatch():
     B = Matrix([[5, 6, 7]])
     with pytest.raises(
         ValueError,
-        match="Number of columns in the first matrix must equal the number of rows in the second matrix."
+        match="Number of columns in the first matrix must equal the number of rows in the second matrix.",
     ):
         A.multiply(B)
 

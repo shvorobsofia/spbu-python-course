@@ -36,8 +36,8 @@ class Matrix:
             raise ValueError("Matrices must have the same dimensions for addition.")
 
         result = [
-            [self.data[i][j] + other.data[i][j]
-            for j in range(self.cols)] for i in range(self.rows)
+            [self.data[i][j] + other.data[i][j] for j in range(self.cols)]
+            for i in range(self.rows)
         ]
         return Matrix(result)
 
