@@ -62,6 +62,7 @@ def cache_results(size: int = 0):
         - Использует LRU стратегию при size > 0
         - Ключ формируется из позиционных и именованных аргументов
     """
+
     def decorator(func: Callable):
         cache: Dict[Any, Any] = {}
         order: Deque[Any] = deque()
@@ -90,6 +91,7 @@ class Evaluated:
     Класс для отложенного вычисления значений по умолчанию.
     При вызове возвращает результат обернутой функции.
     """
+
     def __init__(self, func: Callable[[], Any]):
         self.func = func
 
