@@ -1,8 +1,7 @@
 import functools
 import copy
 from collections import deque
-from typing import Callable, Any
-
+from typing import Any, Callable, Deque, Dict
 
 def curry_explicit(function: Callable, arity: int) -> Callable:
     if arity < 0:
@@ -16,7 +15,6 @@ def curry_explicit(function: Callable, arity: int) -> Callable:
         return lambda *next_args: curried(*(args + next_args))
 
     return curried
-
 
 def uncurry_explicit(function: Callable, arity: int) -> Callable:
     if arity < 0:
@@ -32,11 +30,10 @@ def uncurry_explicit(function: Callable, arity: int) -> Callable:
 
     return uncurried
 
-
 def cache_results(size: int = 0):
     def decorator(func: Callable):
-        cache = {}
-        order = deque()
+        cache: Dict[Any, Any] = {}
+        order: Deque[Any] = deque()
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -44,11 +41,11 @@ def cache_results(size: int = 0):
             if key in cache:
                 return cache[key]
             result = func(*args, **kwargs)
-            cache[key] = result  # Сохраняем результат всегда
-            if size > 0:  # Ограничиваем размер кэша только если size > 0
+            cache[key] = result
+            if size > 0:
                 if len(order) >= size:
                     oldest_key = order.popleft()
-                    cache.pop(oldest_key, None)
+                    del cache[oldest_key]
                 order.append(key)
             return result
 
@@ -62,17 +59,13 @@ class Evaluated:
     def __call__(self):
         return self.func()
 
-
 class Isolated:
     pass
 
-
 def smart_args(func: Callable) -> Callable:
     defaults = func.__defaults__ or ()
-    default_dict = {}
     param_names = func.__code__.co_varnames[:func.__code__.co_argcount]
-    for i, param in enumerate(param_names[-len(defaults):]):
-        default_dict[param] = defaults[i]
+    default_dict = dict(zip(param_names[-len(defaults):], defaults))
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -82,24 +75,23 @@ def smart_args(func: Callable) -> Callable:
 
         for param in sig:
             if param in args_dict:
-                # Позиционные аргументы
                 default_value = default_dict.get(param)
                 if isinstance(default_value, Isolated):
                     new_kwargs[param] = copy.deepcopy(args_dict[param])
                 else:
                     new_kwargs[param] = args_dict[param]
             elif param in new_kwargs:
-                # Именованные аргументы
                 default_value = default_dict.get(param)
                 if isinstance(default_value, Isolated):
                     new_kwargs[param] = copy.deepcopy(new_kwargs[param])
+                elif isinstance(new_kwargs[param], Evaluated):
+                    new_kwargs[param] = new_kwargs[param]()
             elif param in default_dict:
-                # Значения по умолчанию
                 default_value = default_dict[param]
                 if isinstance(default_value, Evaluated):
-                    new_kwargs[param] = default_value()  # Вызываем каждый раз
+                    new_kwargs[param] = default_value()
                 elif isinstance(default_value, Isolated):
-                    new_kwargs[param] = []  # Новый пустой список
+                    new_kwargs[param] = []
                 else:
                     new_kwargs[param] = default_value
 

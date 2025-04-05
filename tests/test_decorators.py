@@ -4,22 +4,16 @@ import functools
 import copy
 from typing import Callable, Any
 
-from project.decorators import curry_explicit, uncurry_explicit, cache_results, smart_args
+from project.decorators import (
+    curry_explicit,
+    uncurry_explicit,
+    cache_results,
+    smart_args,
+    Evaluated,
+    Isolated,
+)
 
 
-class Evaluated:
-    def __init__(self, func: Callable[[], Any]):
-        self.func = func
-
-    def __call__(self):
-        return self.func()
-
-
-class Isolated:
-    pass
-
-
-# Тесты для curry_explicit
 def test_curry_explicit_basic():
     def add(a, b, c):
         return a + b + c
@@ -41,7 +35,6 @@ def test_curry_explicit_too_many_args():
         curried(1, 2, 3)
 
 
-# Тесты для uncurry_explicit
 def test_uncurry_explicit_basic():
     def add(a):
         return lambda b: a + b
@@ -61,7 +54,6 @@ def test_uncurry_explicit_negative_arity():
         uncurry_explicit(lambda x: x, -1)
 
 
-# Тесты для cache_results---
 def test_cache_results_basic():
     call_count = 0
 
@@ -73,7 +65,7 @@ def test_cache_results_basic():
 
     assert add(1, 2) == 3
     assert add(1, 2) == 3
-    assert call_count == 1  # Функция вызвана только раз
+    assert call_count == 1
 
 
 def test_cache_results_with_size():
@@ -90,10 +82,9 @@ def test_cache_results_with_size():
     assert call_count == 1
     assert add(2, 3) == 5
     assert add(1, 2) == 3
-    assert call_count == 3  # Кэш переполнен, первый результат удален
+    assert call_count == 3
 
 
-# Тесты для smart_args
 def test_smart_args_basic():
     def func(a, b=1):
         return a + b
@@ -102,7 +93,7 @@ def test_smart_args_basic():
     assert smart(2) == 3
     assert smart(2, b=2) == 4
 
-#---
+
 def test_smart_args_evaluated():
     call_count = 0
 
@@ -120,7 +111,7 @@ def test_smart_args_evaluated():
     assert smart(3) == 8
     assert call_count == 2  # Evaluated вызывается каждый раз
 
-#---
+
 def test_smart_args_isolated():
     def func(a, b=Isolated()):
         b.append(1)
@@ -133,5 +124,3 @@ def test_smart_args_isolated():
     assert result1 == (5, [0, 1])
     assert result2 == (5, [0, 1])
     assert lst == [0]  # Исходный список не изменился
-
-
