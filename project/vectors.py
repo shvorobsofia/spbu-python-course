@@ -29,7 +29,7 @@ class Vector:
 
         :return: Длина вектора.
         """
-        return math.sqrt(sum(x ** 2 for x in self.components))
+        return math.sqrt(sum(x**2 for x in self.components))
 
     def dot_product(self, other: "Vector") -> float:
         """
