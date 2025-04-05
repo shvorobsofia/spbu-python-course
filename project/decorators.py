@@ -3,6 +3,7 @@ import copy
 from collections import deque
 from typing import Any, Callable, Deque, Dict
 
+
 def curry_explicit(function: Callable, arity: int) -> Callable:
     if arity < 0:
         raise ValueError("Arity cannot be negative")
@@ -15,6 +16,7 @@ def curry_explicit(function: Callable, arity: int) -> Callable:
         return lambda *next_args: curried(*(args + next_args))
 
     return curried
+
 
 def uncurry_explicit(function: Callable, arity: int) -> Callable:
     if arity < 0:
@@ -29,6 +31,7 @@ def uncurry_explicit(function: Callable, arity: int) -> Callable:
         return result
 
     return uncurried
+
 
 def cache_results(size: int = 0):
     def decorator(func: Callable):
@@ -50,7 +53,9 @@ def cache_results(size: int = 0):
             return result
 
         return wrapper
+
     return decorator
+
 
 class Evaluated:
     def __init__(self, func: Callable[[], Any]):
@@ -59,18 +64,20 @@ class Evaluated:
     def __call__(self):
         return self.func()
 
+
 class Isolated:
     pass
 
+
 def smart_args(func: Callable) -> Callable:
     defaults = func.__defaults__ or ()
-    param_names = func.__code__.co_varnames[:func.__code__.co_argcount]
-    default_dict = dict(zip(param_names[-len(defaults):], defaults))
+    param_names = func.__code__.co_varnames[: func.__code__.co_argcount]
+    default_dict = dict(zip(param_names[-len(defaults) :], defaults))
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         new_kwargs = kwargs.copy()
-        sig = func.__code__.co_varnames[:func.__code__.co_argcount]
+        sig = func.__code__.co_varnames[: func.__code__.co_argcount]
         args_dict = dict(zip(sig, args))
 
         for param in sig:
